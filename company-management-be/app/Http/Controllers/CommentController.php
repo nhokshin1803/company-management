@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreCommentRequest;
 use App\Repositories\Comment\CommentRepositoryInterface;
 use App\Http\Resources\CommentResource;
+use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
@@ -70,19 +71,17 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $this->commentRepo->delete($id);
+        DB::table('comments')->where('id', $id)->update(['is_disabled' => 1]);
     }
 
     /**
-     * search resource in storage.
+     * Display resource those have card_id equal to param card_id.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  $title
+     * @param  int $card_id
      * @return \Illuminate\Http\Response
      */
     public function search($card_id)
     {
-        return CommentResource::collection($this->commentRepo->getByConditions('card_id', $card_id));
+       return CommentResource::collection($this->commentRepo->getByConditions('card_id', $card_id));
     }
 }

@@ -127,17 +127,8 @@ abstract class BaseRepository implements RepositoryInterface
             ->where('name', '=', $name)->get();
     }
 
-    public function last()
+    public function where($condition, $value)
     {
-        return $this->model->latest()->first();
-    }
-
-    public function relationshipDelete($user_id, $board_id)
-    {
-        $result = $this->model->where('user_id', '=', $user_id)->where('board_id', '=', $board_id)->first();
-        if ($result->delete()) {
-            return true;
-        }
-        return false;
+        return $this->model->where($condition, $value);
     }
 }

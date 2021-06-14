@@ -1,7 +1,7 @@
 <template>
   <div class="row no-gutters app-header">
     <div class="col-2 d-flex justify-content-center">
-      <router-link :to="`/page`">
+      <router-link :to="`/home`">
       <img src="../assets/devfast-logo.png" alt="logo" class="logo d-flex justify-content-center">
       </router-link>
     </div>

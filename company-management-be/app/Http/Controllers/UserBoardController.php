@@ -50,8 +50,9 @@ class UserBoardController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
+     * Depend on user id and board id
+     * @param  int  $user_id
+     * @param  int  $board_id
      * @return \Illuminate\Http\Response
      */
     public function destroy($user_id, $board_id)
@@ -59,5 +60,4 @@ class UserBoardController extends Controller
         //
         $this->userBoardRepo->relationshipDelete($user_id, $board_id);
     }
-
 }

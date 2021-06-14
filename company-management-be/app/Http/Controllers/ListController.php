@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreListRequest;
 use App\Repositories\List\ListRepositoryInterface;
 use App\Http\Resources\ListResource;
+use Illuminate\Support\Facades\DB;
 
 class ListController extends Controller
 {
@@ -70,15 +71,13 @@ class ListController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $this->listRepo->delete($id);
+        DB::table('list_cards')->where('id', $id)->update(['is_disabled' => 1]);
     }
 
     /**
-     * search resource in storage.
+     * Display resource those have board_id equal to param board_id.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  $id
+     * @param  $board_id
      * @return \Illuminate\Http\Response
      */
     public function search($board_id)

@@ -1,10 +1,14 @@
 <template>
-  <div>
+  <div :key="renderCard">
+    <!--Start card dialogue shown when click card in list-->
     <b-modal size="lg" v-model="isShowCard" @hide="$emit('cardClosed')">
       <template #modal-title>
         <div class="modal-title">
           {{ card.name }}
-          <button @click="deleteCard" class="btn float-right btn-delete-card pb-1">
+          <button
+            @click="deleteCard"
+            class="btn float-right btn-delete-card pb-1"
+          >
             <fa :icon="fas.faTrash" />
           </button>
         </div>
@@ -28,71 +32,64 @@
         </div>
         <div class="comment row">
           <div v-for="comment in comments" :key="comment.id">
-            <img src="" alt="" class="comment-img col-1" />
-            <p class="col-11">
-              {{ comment.detail }}
-              <button @click="deleteComment(comment)">Delete</button>
-            </p>
+            <Comment :comment="comment" @comment-deleted="updateCard"></Comment>
           </div>
         </div>
       </template>
     </b-modal>
+    <!--End card dialogue shown when click card in list-->
   </div>
 </template>
 <script>
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import Comment from "../comment/Comment.vue";
 export default {
-
+  components: {
+    Comment
+  },
   data() {
     return {
+      comments: [],
       newComment: "",
-      isShowCard: false
+      isShowCard: false,
+      renderCard: 0
     };
   },
   props: {
     showCard: Boolean,
-    card: {},
-    comments: []
+    card: {}
   },
 
   mounted() {
     this.$emit("showcardchange", this.showCard);
+    this.getCardData();
   },
 
   methods: {
-    createNewComment() {
-      this.comments.push({
+    async createNewComment() {
+      await this.$axios.post("comment/store", {
         detail: this.newComment,
-        card_id: parseInt(this.card.id)
+        card_id: parseInt(this.card.id),
+        user_id: this.$auth.user.id
       });
-      this.$axios
-        .post("comment/store", {
-          detail: this.newComment,
-          card_id: parseInt(this.card.id),
-          user_id: parseInt(1)
-        })
-        .then(function() {
-          this.newComment = "";
-        });
+      this.newComment = "";
     },
 
-    deleteCard() {
-      let that = this;
-      let disabledCard = this.card;
-      disabledCard.is_disabled = 1;
-      this.$axios.put("card/update/" + this.card.id, disabledCard);
-      this.$emit('updateList');
-      console.log('updateList');
+    async deleteCard() {
+      await this.$axios.delete("card/destroy/" + this.card.id);
+      this.$emit("updateList");
       this.isShowCard = false;
     },
 
-    deleteComment(comment) {
-      let disabledComment = comment;
-      disabledComment.is_disabled = 1;
-      this.$axios.put("comment/update/" + comment.id, disabledComment);
-      setTimeout(function() {
-        location.reload();
-      }, 200);
+    async getCardData() {
+      await this.$axios.get("comment/search/" + this.card.id).then(resp => {
+        this.comments = resp.data.data;
+      });
+    },
+
+    async updateCard() {
+      await this.getCardData();
+      this.renderCard++;
     }
   },
 
@@ -106,7 +103,7 @@ export default {
     fas() {
       return fas;
     }
-  },
+  }
 };
 </script>
 <style>
@@ -122,5 +119,4 @@ export default {
 .modal-title {
   width: 100%;
 }
-
 </style>

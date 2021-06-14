@@ -4,66 +4,40 @@
       <List :list="list" @deleteList="updateBoard"></List>
     </div>
     <div class="col-2">
-      <b-button v-b-modal="'add-list'" class="btn-add-list"
-        ><span class="text-add-list mr-2">Add list</span></b-button
-      >
-        <!-- The modal -->
-        <b-modal id="add-list" size="sm" title="Add list" v-model="addListDialog">
-          <label for="board-title">List name</label><br />
-          <input
-            type="text"
-            name=""
-            id="board-title"
-            class="form-control"
-            v-model="listName"
-          />
-          <template #modal-footer>
-            <div class="w-100">
-              <button
-                class="btn btn-success center"
-                variant="primary"
-                @click="createList"
-              >
-                Submit
-              </button>
-            </div>
-          </template>
-        </b-modal>
-        </div>
+
+      <button-create-list></button-create-list>
+
+      <!-- The modal -->
+      <create-edit-list :createListDialog="createListDialog" :boardId="parseInt(boardId)" @list-created="updateBoard"></create-edit-list>
+    </div>
   </div>
 </template>
 
 <script>
-import List from "./List.vue";
+import List from "../list/List.vue";
+import CreateEditList from "../list/CreateEditList.vue";
+import ButtonCreateList from "../list/ButtonCreateList.vue";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 export default {
   components: {
-    List
+    List,
+    CreateEditList,
+    ButtonCreateList
   },
   methods: {
-    createList(){
-      let that = this;
-      this.addListDialog = false;
-      this.$axios.post('list/store', {name: this.listName, board_id: parseInt(this.boardId)}).then(async function(){
-          await that.callApi();
-          console.log('Before render board');
-          that.reRenderBoard();
-      });
-    },
-
     reRenderBoard(){
       console.log('re render board');
       this.boardRender++;
     },
 
-    callApi() {
+    getBoardData() {
       this.$axios.get('list/search/'+ this.boardId).then(resp => {
         this.lists = resp.data.data;
       })
     },
 
     async updateBoard() {
-      await this.callApi();
+      await this.getBoardData();
       this.reRenderBoard();
     }
   },
@@ -71,7 +45,7 @@ export default {
   data() {
     return {
       lists: [],
-      addListDialog: false,
+      createListDialog: false,
       listName: '',
       boardRender: 0,
     };
@@ -81,7 +55,7 @@ export default {
   },
 
   mounted() {
-    this.callApi();
+    this.getBoardData();
   },
 
   computed: {

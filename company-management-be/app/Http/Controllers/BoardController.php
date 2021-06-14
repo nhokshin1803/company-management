@@ -69,17 +69,33 @@ class BoardController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($user_id, $board_id)
     {
-        //
-        $this->boardRepo->delete($id);
+        DB::table('boards')->where('id', $board_id)->update(['is_disabled' => 1]);
+        DB::table('user_boards')
+            ->where('board_id', $board_id)
+            ->where('user_id', $user_id)
+            ->delete();
     }
 
-    public function searchByBoardId($id) {
-        return BoardResource::collection($this->boardRepo->getByConditions('id', $id));
-    }
-
-    public function last() {
-        return new BoardResource($this->boardRepo->last());
+    /**
+     * Display the boards that have param user id
+     * The relationship shown in table user_board
+     * @param  int  $user_id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserBoards($user_id)
+    {
+        $boards_id = DB::table('user_boards')
+            ->select('board_id')
+            ->where('user_id', $user_id)
+            ->get();
+        $boardAmount = sizeof($boards_id);
+        for ($i = 0; $i < $boardAmount; $i++) {
+            $boards_id[$i] = $boards_id[$i]->board_id;
+        }
+        $result = DB::table('boards')
+            ->whereIn('id', $boards_id)->get();
+        return BoardResource::collection($result);
     }
 }

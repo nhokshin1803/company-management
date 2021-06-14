@@ -80,7 +80,7 @@ export default {
   },
   beforeCreate() {
     if(this.$auth.loggedIn) {
-      this.$router.push("/page");
+      this.$router.push("/home");
     }
     console.log(this.$auth.loggedIn);
   },

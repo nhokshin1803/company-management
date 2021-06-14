@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreCardRequest;
 use App\Repositories\Card\CardRepositoryInterface;
 use App\Http\Resources\CardResource;
-
+use Illuminate\Support\Facades\DB;
 class CardController extends Controller
 {
     protected $cardRepo;
@@ -71,14 +71,13 @@ class CardController extends Controller
     public function destroy($id)
     {
         //
-        $this->cardRepo->delete($id);
+        DB::table('cards')->where('id', $id)->update(['is_disabled' => 1]);
     }
 
     /**
-     * search resource in storage.
+     * Display resource those have list_id equal to param list_id.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  $id
+     * @param  $list_id
      * @return \Illuminate\Http\Response
      */
     public function search($list_id)

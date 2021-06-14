@@ -11,6 +11,13 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
 {
+    /**
+     * JWT Authentication
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function authenticate(Request $request)
     {
         $credentials = $request->only('username', 'password');
@@ -26,6 +33,13 @@ class UserController extends Controller
         return response()->json(compact('token'));
     }
 
+    /**
+     * JWT Register
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -49,6 +63,13 @@ class UserController extends Controller
         return response()->json(compact('user', 'token'), 201);
     }
 
+    /**
+     * JWT get user
+     *
+     * @param  null
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getAuthenticatedUser()
     {
         try {
