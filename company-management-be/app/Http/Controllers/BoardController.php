@@ -35,9 +35,9 @@ class BoardController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreBoardRequest $request)
+    public function store(StoreBoardRequest $request, $user_id)
     {
-        return $this->boardRepo->create($request->all());
+        $this->boardRepo->createBoard($request->all(), $user_id);
     }
 
     /**
@@ -71,11 +71,7 @@ class BoardController extends Controller
      */
     public function destroy($user_id, $board_id)
     {
-        DB::table('boards')->where('id', $board_id)->update(['is_disabled' => 1]);
-        DB::table('user_boards')
-            ->where('board_id', $board_id)
-            ->where('user_id', $user_id)
-            ->delete();
+        return $this->boardRepo->softDelete($user_id, $board_id);
     }
 
     /**
@@ -84,18 +80,8 @@ class BoardController extends Controller
      * @param  int  $user_id
      * @return \Illuminate\Http\Response
      */
-    public function getUserBoards($user_id)
+    public function getBoards($user_id)
     {
-        $boards_id = DB::table('user_boards')
-            ->select('board_id')
-            ->where('user_id', $user_id)
-            ->get();
-        $boardAmount = sizeof($boards_id);
-        for ($i = 0; $i < $boardAmount; $i++) {
-            $boards_id[$i] = $boards_id[$i]->board_id;
-        }
-        $result = DB::table('boards')
-            ->whereIn('id', $boards_id)->get();
-        return BoardResource::collection($result);
+        return $this->boardRepo->getBoards($user_id);
     }
 }

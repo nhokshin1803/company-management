@@ -20,7 +20,11 @@
           :key="card.position"
           class="card-button"
         >
-          <button-card :cardId="card.id" :cardName="card.name" @showCard="showCard=!showCard"></button-card>
+          <button-card
+            :cardId="card.id"
+            :cardName="card.name"
+            @showCard="showCard = !showCard"
+          ></button-card>
           <Card
             :card="card"
             :showCard="showCard"
@@ -68,7 +72,6 @@ export default {
     }
   },
   methods: {
-
     // gọi api sau đó sắp xếp lại cards theo position
     async getListData() {
       await this.$axios.get("card/search/" + this.list.id).then(resp => {
@@ -86,8 +89,9 @@ export default {
     },
 
     cardOrdered() {
+      if (this.cards.array.length <= 0) return true;
       for (let i = 0; i < this.cards.array.length - 1; i++) {
-        if (this.cards.array[i].position > this.card.array[i + 1].position) {
+        if (this.cards.array[i].position > this.cards.array[i + 1].position) {
           return false;
         }
       }

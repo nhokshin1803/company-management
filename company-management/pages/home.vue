@@ -67,6 +67,7 @@ export default {
 
     async updatePage() {
       await this.getPageData();
+      this.createBoardDialog = false;
       this.renderPage++;
     }
   },
@@ -101,11 +102,6 @@ export default {
   padding: 0 5rem;
 }
 
-.btn-new-board {
-  line-height: 1.5rem;
-  background-color: transparent !important;
-}
-
 .board-name {
   color: #000;
   font-weight: 600;
@@ -119,4 +115,5 @@ export default {
 .text-no-board {
   font-size: 16px;
 }
+
 </style>

@@ -25,9 +25,9 @@ use App\Http\Controllers\DataController;
 Route::get('board/', [BoardController::class, 'index']);
 Route::get('board/show/{id}', [BoardController::class, 'show']);
 Route::get('board/last', [BoardController::class, 'last']);
-Route::get('board/search/{user_id}', [BoardController::class, 'getUserBoards']);
+Route::get('board/search/{user_id}', [BoardController::class, 'getBoards']);
 Route::delete('board/destroy/{user_id}/{board_id}', [BoardController::class, 'destroy']);
-Route::post('board/store', [BoardController::class, 'store']);
+Route::post('board/store/{user_id}', [BoardController::class, 'store']);
 Route::put('board/update/{id}', [BoardController::class, 'update']);
 
 // List controller

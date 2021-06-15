@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="create-board" size="sm" title="Create Board" v-model="createBoardDialog">
+  <b-modal id="create-board" size="sm" title="Create Board" v-model="showBoardDialog">
     <label for="board-title">Board title</label><br />
     <input
       type="text"
@@ -26,13 +26,8 @@ export default {
   methods: {
     async createBoard() {
       this.showBoardDialog = false;
-      let that = this;
-      await that.$axios.post('board/store', {name: that.boardName}).then(async function(){
-        await that.$axios.get('board/last').then(async function(resp) {
-          await that.$axios.post('userboard/store', {user_id: that.$auth.user.id, board_id: resp.data.data.id});
-          that.$emit('board-created');
-        })
-      });
+      this.$axios.post('board/store/' + this.$auth.user.id, {name: this.boardName})
+      this.$emit('board-created');
     },
   },
   props: {
@@ -40,9 +35,16 @@ export default {
   },
   data () {
     return {
-      boardName: ''
+      boardName: '',
+      showBoardDialog: false
     }
   },
+
+  watch: {
+    createBoardDialog: function() {
+      this.showBoardDialog = this.createBoardDialog
+    }
+  }
 
 }
 </script>
